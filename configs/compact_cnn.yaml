@@ -1,0 +1,6 @@
+model: compact_cnn
+dataset: local_mnist_like
+sample_size: 8
+holders: 2
+mpc_backend: mock
+proof_backend: mock

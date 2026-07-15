@@ -1,0 +1,3 @@
+# Placeholder MP-SPDZ program path for logistic regression.
+# Real integration must compile and run this through MP-SPDZ; the Python adapter
+# intentionally fails until that integration is implemented.

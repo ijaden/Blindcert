@@ -1,0 +1,6 @@
+model: mlp
+dataset: synthetic_binary_tabular
+sample_size: 8
+holders: 2
+mpc_backend: mock
+proof_backend: mock
