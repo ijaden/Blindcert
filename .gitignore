@@ -35,3 +35,7 @@ external/
 # Generated experiment artifacts
 artifacts/
 results/
+
+/docs/
+
+/scripts/
