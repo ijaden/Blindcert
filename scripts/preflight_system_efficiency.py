@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import platform
@@ -58,8 +59,8 @@ def main() -> int:
              "node": toolchain / "node-v24.18.0-linux-x64/bin/node",
              "snarkjs": toolchain / "node_modules/.bin/snarkjs"}
     blockers = [
-        "MASCOT returns an execution descriptor instead of authenticated witness shares.",
-        "BN254 MAC-checked resharing to REP3 is not implemented or validated.",
+        "Authenticated LR input/prediction shares are exported, but full certification witness fields are not wired.",
+        "BN254 to REP3 encoding passes an isolated multiplication self-check; certification integration is pending.",
         "Complete certification circuits and public statement binding are not implemented.",
         "Independent public verification and closed-interval timing are not implemented.",
         "Quantization bounds and feasible statistical policy are not yet validated.",
@@ -74,7 +75,8 @@ def main() -> int:
         "cpu": capture(["lscpu"]), "memory": capture(["free", "-b"]),
         "host_information": "Only guest-visible information is available.",
         "source_commit": capture(["git", "-C", str(ROOT), "rev-parse", "HEAD"]),
-        "tools": {name: {"path": str(path), "exists": path.exists()}
+        "tools": {name: {"path": str(path), "exists": path.exists(),
+                         "sha256": hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() else None}
                   for name, path in tools.items()},
         "versions": {name: capture([str(tools[name]), "--version"])
                      for name in ("circom", "co_circom", "node") if tools[name].exists()},
@@ -82,7 +84,9 @@ def main() -> int:
     manifest = [{**model, "parameter_count": parameter_count(model),
                  "status": "NOT_IMPLEMENTED", "constraints": None, "private_inputs": None}
                 for model in config["models"]]
-    report = {"status": "NOT_IMPLEMENTED", "measurement_started": False,
+    bridge_results = sorted((ROOT / "results/share_bridge").glob("*/result.json"), key=lambda p: p.stat().st_mtime)
+    bridge = json.loads(bridge_results[-1].read_text()) if bridge_results else None
+    report = {"share_bridge_self_check": bridge, "status": "NOT_IMPLEMENTED", "measurement_started": False,
               "blockers": blockers, "models": manifest,
               "iteration_decision": "One session, following the explicit instruction in section 1."}
     for name, value in (("environment.json", environment), ("model_manifest.json", manifest),

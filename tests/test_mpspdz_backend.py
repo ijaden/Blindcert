@@ -1,4 +1,7 @@
 import os
+from pathlib import Path
+
+from blindcert.bridge.mpspdz_rep3 import read_authenticated_share_values
 
 from blindcert.commitment import commit_model
 from blindcert.datasets.tabular import synthetic_binary_tabular
@@ -43,3 +46,11 @@ def test_mpspdz_logistic_real_backend_when_installed() -> None:
     )
     assert result.ok
     assert result.online_seconds is not None
+
+    assert len(result.witness_shares) == 3
+    assert result.raw_logs['party_count'] == 3
+    assert result.raw_logs['party_exit_codes'] == [0, 0, 0]
+    for i, share in enumerate(result.witness_shares):
+        assert share.value['party'] == i
+        assert share.value['mac_checked']
+        assert len(read_authenticated_share_values(Path(share.value['path']), share.value['count'])) == share.value['count']

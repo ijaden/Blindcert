@@ -1,33 +1,41 @@
 # Ubuntu system efficiency implementation status
 
-The complete experiment is not implemented. No new end-to-end performance claims or paper tables have been produced. Existing component benchmark scripts do not satisfy this experiment and must not be used to populate its tables.
+The complete experiment remains unfinished. No formal end-to-end measurement or paper tables have been produced. The default benchmark entry checks readiness and returns exit code 2 while the complete relation is unavailable. Legacy component measurements cannot populate the requested system tables.
 
-The checkout retains upstream commit `0e480001c8712e4d96bd5216ee76b038acf895a4`. The original local directory did not contain Git metadata and is preserved separately.
+The checkout retains upstream commit `0e480001c8712e4d96bd5216ee76b038acf895a4`. The original local directory is preserved separately. Work uses branch `experiment/system-e2e-three-party`.
 
-The configuration uses N=1024, m=128, three MASCOT parties, three REP3 provers, two holders, two strata, and one session per model. One session follows the explicit instruction in section 1 of the supplied plan; later five-session examples are superseded. Resource limits in the configuration are proposed budgets, not an assertion that the workload fits.
+## Completed work
 
-Run the readiness inspection using the existing local tools:
+The LR MASCOT backend now launches three actual party processes with separate input and persistence directories. P0 supplies the model and P1/P2 supply their respective holder records. It operates over the BN254 scalar field and exports three authenticated share files containing model inputs, sampled records and predictions. Masked openings and explicit MAC checks precede export; conversion is attempted only after every process exits successfully. These exported fields are not yet a complete certification witness.
+
+The bridge decodes MP-SPDZ 0.4.3 persistence headers and Montgomery field elements, then serializes co-circom 0.9.0 REP3 inputs. Each conversion process reads its own additive share and its predecessor's share, without reconstructing the secret. A three-private-input multiplication self-check successfully generated and verified a real Groth16 proof from these shares. No clear witness, split-input or split-witness command was used in that self-check. It is a functional check, not a system performance experiment.
+
+The security boundary is explicitly limited: MASCOT authentication is checked before the local file conversion; REP3 supports an honest majority with at most one passive corruption. Trusted local files and orchestration are assumed during handoff. The converter does not independently validate persisted MACs after arbitrary file modification, and does not provide active security for REP3. The self-check uses public example TLS keys and an insecure test SRS; these are not a deployment setup.
+
+Ten deterministic private workloads have been generated under artifacts/system_workload. The Python reference uses exact integer arithmetic, quadratic hidden activations, a zero decision threshold and lexicographic SVM quadratic coefficients. Model exports contain 8,321 and 41,217 parameters for the largest two MLPs, respectively. Per-layer worst-case integer bounds are derived and recorded. Cross-backend equivalence remains unvalidated.
+
+Legacy full-protocol execution now refuses to report success as a continuous session. Plaintext-witness proof fallbacks have been removed from both legacy full-protocol and efficiency scripts. A raw authenticated share descriptor is rejected by the existing plaintext passport path instead of being treated as a complete Witness.
+
+## Configuration and reproducibility
+
+The fixed configuration uses N=1024, m=128, three MASCOT parties, three REP3 provers, two holders, two strata, one session and seed 20261105. One session follows the explicit instruction in section 1 of the supplied plan. Resource limits are proposed budgets; fit has not been established. The VMware guest exposes eight vCPUs and approximately 16 GiB RAM. Physical-host allocation is not observable from the guest.
 
 ```bash
-python3 scripts/preflight_system_efficiency.py \
-  --config configs/system_efficiency.yaml \
-  --toolchain-root /home/jaden/workspace/blindcert/external
+python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --preflight
+python3 scripts/check_share_bridge.py
+python3 -m pytest -q
 ```
 
-Exit code 2 means implementation blockers remain. The command records environment.json, model_manifest.json, preflight.json and effective_config.yaml in results/system_efficiency. It does not start measurement. The manifest parameter counts describe the configured architectures, not measured R1CS sizes.
+The bridge and real MPC tests require permission for local sockets. The bridge writes a fresh UUID directory under results/share_bridge, with per-party logs, private share files and a public result.json. The readiness check writes environment.json, effective_config.yaml, model_manifest.json and preflight.json under results/system_efficiency. It returns 2 while implementation blockers remain. Public evidence and tool binary hashes are saved in docs/system_efficiency_audit.json. No private inputs, witnesses, shares or keys are staged for Git.
 
-The guest exposes eight vCPUs, approximately 16 GiB RAM and VMware virtualization. The physical host's full allocation cannot be established from the guest.
+## Remaining required implementation
 
-## Required implementation before measuring
-
-1. Export authenticated MASCOT shares over the BN254 scalar field and validate their MACs before conversion.
-2. Implement a specified, tested conversion to REP3 with explicit security assumptions. Renaming share files or reconstructing a clear witness does not satisfy this requirement.
-3. Implement the complete certification relation, including full-population membership proofs, matching model arithmetic, feasible policy and public statement binding.
-4. Wire registration, challenge, MPC, conversion, witness preparation, proof, packaging and independent verification into one session with direct outer timing.
-5. Validate the small-model normal path before running the model list. Implement an exporter that consumes only successful measurements and preserves failed rows.
-
-The model list includes LR-D1024 and a 41,217-parameter quadratic MLP. These are configured scaling targets; their practical predictive utility has not been evaluated using the synthetic efficiency workload.
+1. Complete certification circuits with full-population membership paths, registered model commitments, sampled-index binding, matching arithmetic and a feasible statistical policy.
+2. Export all circuit input fields from the same MASCOT session, integrate conversion and cooperative witness preparation, and check the result against the independent integer reference.
+3. Connect public verification to the expected registered statement and transcript in an independent process.
+4. Implement closed-interval Setup, session and first-use timing, per-process resource limits and isolated single-prover controls.
+5. Run all ten models sequentially, retain actual failed rows, export the two tables from measured records, and publish final reproducibility results.
 
 ## Validation
 
-The readiness inspection has run against the existing local toolchain. All ten architectures are marked NOT_IMPLEMENTED, and no timing fields are populated. The existing thirteen tests pass when CO_CIRCOM points to the installed binary; these tests do not validate the missing cross-protocol conversion or a real system session.
+Sixteen tests pass, including the updated three-party MASCOT test and integer model semantic checks. The isolated share-bridge self-check also passes. These results do not establish a complete BlindCert certification session.

@@ -7,6 +7,7 @@ from blindcert.types import (
     ProvingKey,
     PublicStatement,
     WitnessShare,
+    Witness,
 )
 
 
@@ -21,6 +22,8 @@ def generate_passport(
     if not witness_shares:
         return None
     witness = witness_shares[0].value
+    if not isinstance(witness, Witness):
+        return None
     if not check_relation(public_statement, witness, policy):
         return None
     result = backend.prove(proving_key, public_statement, witness_shares)

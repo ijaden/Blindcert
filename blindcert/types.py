@@ -153,6 +153,9 @@ class WitnessShare:
 class MPCConfig:
     backend_id: str
     protocol: str = "mock"
+    party_count: int = 3
+    timeout_s: float = 3600
+    work_dir: str | None = None
 
 
 @dataclass(frozen=True)

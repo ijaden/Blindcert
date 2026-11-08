@@ -323,57 +323,6 @@ def run_collaborative(configs: list[Path], attempt_mpc_witness_proof: bool) -> d
         witness_procs.append((f"co_generate_witness_party{i}", proc, started))
     witness_times = wait_all(witness_procs)
 
-    mpc_witness_proof_status = "not_attempted"
-    mpc_witness_proof_s: float | None = None
-    if attempt_mpc_witness_proof:
-        started = time.perf_counter()
-        proof_procs: list[tuple[str, subprocess.Popen[str], float]] = []
-        for i, cfg in enumerate(configs):
-            cmd = [
-                str(CO_CIRCOM),
-                "generate-proof",
-                "groth16",
-                "--witness",
-                str(WORK / f"witness.wtns.{i}.shared"),
-                "--zkey",
-                str(WORK / "blindcert_lr4.zkey"),
-                "--protocol",
-                "REP3",
-                "--curve",
-                "BN254",
-                "--config",
-                str(cfg),
-            ]
-            if i == 0:
-                cmd.extend(["--out", str(WORK / "mpc_witness_proof.json"), "--public-input", str(WORK / "mpc_witness_public.json")])
-            proc, p_started = start(cmd)
-            proof_procs.append((f"mpc_witness_proof_party{i}", proc, p_started))
-        try:
-            wait_all(proof_procs)
-            mpc_witness_proof_status = "ok"
-        except RuntimeError as exc:
-            mpc_witness_proof_status = "failed_upstream_co_groth16_index_error"
-            (WORK / "logs" / "mpc_witness_proof_failed.txt").write_text(str(exc), encoding="utf-8")
-        mpc_witness_proof_s = time.perf_counter() - started
-
-    _, split_witness_s = run(
-        [
-            str(CO_CIRCOM),
-            "split-witness",
-            "--witness",
-            str(WORK / "witness.wtns"),
-            "--r1cs",
-            str(WORK / "blindcert_lr4.r1cs"),
-            "--protocol",
-            "REP3",
-            "--curve",
-            "BN254",
-            "--out-dir",
-            str(WORK),
-        ],
-        cwd=WORK,
-    )
-
     proof_procs = []
     for i, cfg in enumerate(configs):
         cmd = [
@@ -394,7 +343,7 @@ def run_collaborative(configs: list[Path], attempt_mpc_witness_proof: bool) -> d
         if i == 0:
             cmd.extend(["--out", str(WORK / "collaborative_proof.json"), "--public-input", str(WORK / "collaborative_public.json")])
         proc, started = start(cmd)
-        proof_procs.append((f"split_witness_proof_party{i}", proc, started))
+        proof_procs.append((f"generated_witness_proof_party{i}", proc, started))
     proof_times = wait_all(proof_procs)
 
     _, verify_s = run(
@@ -420,13 +369,13 @@ def run_collaborative(configs: list[Path], attempt_mpc_witness_proof: bool) -> d
         "co_generate_witness_party0_s": witness_times["co_generate_witness_party0"],
         "co_generate_witness_party1_s": witness_times["co_generate_witness_party1"],
         "co_generate_witness_party2_s": witness_times["co_generate_witness_party2"],
-        "mpc_witness_proof_status": mpc_witness_proof_status,
-        "mpc_witness_proof_s": mpc_witness_proof_s,
-        "co_split_witness_s": split_witness_s,
+        "mpc_witness_proof_status": "ok",
+        "mpc_witness_proof_s": max(proof_times.values()),
+        "co_split_witness_s": 0.0,
         "co_prove_wall_s": max(proof_times.values()),
-        "co_prove_party0_s": proof_times["split_witness_proof_party0"],
-        "co_prove_party1_s": proof_times["split_witness_proof_party1"],
-        "co_prove_party2_s": proof_times["split_witness_proof_party2"],
+        "co_prove_party0_s": proof_times["generated_witness_proof_party0"],
+        "co_prove_party1_s": proof_times["generated_witness_proof_party1"],
+        "co_prove_party2_s": proof_times["generated_witness_proof_party2"],
         "co_verify_s": verify_s,
     }
 
@@ -540,10 +489,9 @@ Key values suitable for an experimental-efficiency table:
 - Collaborative proof size: {s["collaborative_proof_bytes"] / 1024:.2f} KB
 - Verification key size: {s["verification_key_bytes"] / 1024:.2f} KB
 
-Important limitation: co-circom `generate-witness` succeeds, but in this environment co-groth16 proof generation
-from those MPC-generated witness shares triggers an upstream index error. The reported collaborative proving time
-therefore uses co-circom `split-witness` shares from the verified witness, then runs the real REP3 collaborative
-Groth16 prover and verifier. Do not describe this table as a fully private witness-generation-to-proof pipeline.
+Important limitation: this legacy component experiment does not implement a continuous MASCOT-to-REP3
+certification session. It must not populate system efficiency tables. Proof generation fails immediately if
+co-circom cannot use the generated witness shares; there is no plaintext-witness fallback.
 
 Generated files:
 
@@ -563,10 +511,26 @@ def write_raw(records: Iterable[dict[str, Any]]) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run BlindCert efficiency measurements.")
-    parser.add_argument("--iterations", type=int, default=3)
+    parser.add_argument("--config", type=Path)
+    parser.add_argument("--preflight", action="store_true")
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--legacy-component-benchmark", action="store_true")
+    parser.add_argument("--iterations", type=int, default=1)
     parser.add_argument("--clean", action="store_true")
     parser.add_argument("--attempt-mpc-witness-proof", action="store_true")
     args = parser.parse_args()
+    if args.config or args.preflight:
+        command = [os.sys.executable, str(ROOT / "scripts/preflight_system_efficiency.py")]
+        if args.config:
+            command.extend(["--config", str(args.config)])
+        if args.output:
+            command.extend(["--output", str(args.output)])
+        result = subprocess.run(command, check=False)
+        if not args.preflight:
+            print("System measurement is unavailable until the complete certification relation is implemented.", file=os.sys.stderr)
+        return result.returncode or 2
+    if not args.legacy_component_benchmark:
+        parser.error("use --config configs/system_efficiency.yaml --preflight; the legacy path requires --legacy-component-benchmark")
     if args.iterations < 1:
         raise SystemExit("--iterations must be positive")
 

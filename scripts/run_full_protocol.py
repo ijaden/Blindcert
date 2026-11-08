@@ -320,32 +320,7 @@ def run_collaborative(configs: list[Path]) -> str:
         )
     wait_all(witness_procs)
     witness_source = "co-circom generate-witness"
-    try:
-        run_proof_from_current_witness_shares(configs, "mpc_witness")
-    except RuntimeError as exc:
-        (WORK / "logs" / "co_circom_generate_witness_proof_failed.txt").write_text(
-            str(exc) + "\nFalling back to split-witness shares from the verified witness.wtns.\n",
-            encoding="utf-8",
-        )
-        witness_source = "split-witness fallback after co-circom generate-witness proof incompatibility"
-        run(
-            [
-                str(CO_CIRCOM),
-                "split-witness",
-                "--witness",
-                str(WORK / "witness.wtns"),
-                "--r1cs",
-                str(WORK / "blindcert_lr4.r1cs"),
-                "--protocol",
-                "REP3",
-                "--curve",
-                "BN254",
-                "--out-dir",
-                str(WORK),
-            ],
-            cwd=WORK,
-        )
-        run_proof_from_current_witness_shares(configs, "split_witness")
+    run_proof_from_current_witness_shares(configs, "mpc_witness")
     run(
         [
             str(CO_CIRCOM),
@@ -403,16 +378,7 @@ def write_passport(input_data: dict[str, object], mpc_result: dict[str, object],
 
 
 def main() -> int:
-    require_tools()
-    prepare_dirs()
-    configs = write_party_configs()
-    input_data = write_input()
-    compile_and_setup()
-    run_single_prover_baseline()
-    mpc_result = run_mpspdz_baseline()
-    witness_source = run_collaborative(configs)
-    write_passport(input_data, mpc_result, witness_source)
-    return 0
+    raise RuntimeError("This legacy component demo is not a continuous certification session; use run_efficiency_benchmark.py --config configs/system_efficiency.yaml --preflight")
 
 
 if __name__ == "__main__":

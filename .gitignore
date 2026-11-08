@@ -29,6 +29,7 @@ dist/
 Thumbs.db
 
 # Downloaded third-party toolchains (recreated by scripts/install_*_release.py)
+/external
 external/
 
 # Generated experiment artifacts

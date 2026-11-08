@@ -1,0 +1,292 @@
+{
+  "complete_system_implemented": false,
+  "formal_measurements_started": false,
+  "share_bridge_self_check": {
+    "verified": true,
+    "mpc_parties": 3,
+    "proof_parties": 3,
+    "mac_checked_before_conversion": true,
+    "plaintext_witness_used": false,
+    "relation": "three-private-input multiplication; bridge self-check only",
+    "security": "REP3 honest-majority semi-honest, at most one passive corruption; local trusted files",
+    "srs": "test-only insecure initialization; not an experiment or production setup",
+    "directory": "results/share_bridge/8a8af7e693384bd89d4b8e8291480adb"
+  },
+  "toolchain": {
+    "circom": {
+      "path": "/home/jaden/workspace/blindcert/external/circom",
+      "exists": true,
+      "sha256": "85342c7ff332d948df7c0c50ecf201e6129349aef550ce873f3c811b79fe53a3"
+    },
+    "co_circom": {
+      "path": "/home/jaden/workspace/blindcert/external/co-circom",
+      "exists": true,
+      "sha256": "9c258adf96c7094d6f8c77b800c8bc985ec4d1d5acd4718c8ae41876f63ea2cb"
+    },
+    "mascot": {
+      "path": "/home/jaden/workspace/blindcert/external/mp-spdz-0.4.3/mascot-party.x",
+      "exists": true,
+      "sha256": "c01ca9b9db62889161c8f06fb3378c0ce533271e4cf0dda5057346e0737f3c7e"
+    },
+    "node": {
+      "path": "/home/jaden/workspace/blindcert/external/node-v24.18.0-linux-x64/bin/node",
+      "exists": true,
+      "sha256": "41a74efb34cbde5c7632cdac0cf8bd1a14d0b8d73dc1e82755014d9a9ce70f5c"
+    },
+    "snarkjs": {
+      "path": "/home/jaden/workspace/blindcert/external/node_modules/.bin/snarkjs",
+      "exists": true,
+      "sha256": "6d787e37a4d1a2c6dd6032dadca09c0b3b007d4d4578bb6232a98136555d051a"
+    }
+  },
+  "versions": {
+    "circom": {
+      "command": [
+        "/home/jaden/workspace/blindcert/external/circom",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "circom compiler 2.2.3\n",
+      "stderr": ""
+    },
+    "co_circom": {
+      "command": [
+        "/home/jaden/workspace/blindcert/external/co-circom",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "co-circom 0.9.0\n",
+      "stderr": ""
+    },
+    "node": {
+      "command": [
+        "/home/jaden/workspace/blindcert/external/node-v24.18.0-linux-x64/bin/node",
+        "--version"
+      ],
+      "returncode": 0,
+      "stdout": "v24.18.0\n",
+      "stderr": ""
+    }
+  },
+  "prepared_models": [
+    {
+      "name": "LR-D8",
+      "parameter_count": 9,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 9,
+            "absolute_bound": 9,
+            "signed_bits": 5
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "LR-D16",
+      "parameter_count": 17,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 17,
+            "absolute_bound": 17,
+            "signed_bits": 6
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "LR-D64",
+      "parameter_count": 65,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 65,
+            "absolute_bound": 65,
+            "signed_bits": 8
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "MLP-D16-H8",
+      "parameter_count": 145,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 17,
+            "absolute_bound": 289,
+            "signed_bits": 10
+          },
+          {
+            "preactivation_absolute_bound": 2313,
+            "absolute_bound": 2313,
+            "signed_bits": 13
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "MLP-D16-H8,4",
+      "parameter_count": 177,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 17,
+            "absolute_bound": 289,
+            "signed_bits": 10
+          },
+          {
+            "preactivation_absolute_bound": 2313,
+            "absolute_bound": 5349969,
+            "signed_bits": 24
+          },
+          {
+            "preactivation_absolute_bound": 21399877,
+            "absolute_bound": 21399877,
+            "signed_bits": 26
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "polynomial SVM-D16,2",
+      "parameter_count": 153,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "absolute_bound": 153,
+            "signed_bits": 9
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "LR-D256",
+      "parameter_count": 257,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 257,
+            "absolute_bound": 257,
+            "signed_bits": 10
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "LR-D1024",
+      "parameter_count": 1025,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 1025,
+            "absolute_bound": 1025,
+            "signed_bits": 12
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "MLP-D128-H64",
+      "parameter_count": 8321,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 129,
+            "absolute_bound": 16641,
+            "signed_bits": 16
+          },
+          {
+            "preactivation_absolute_bound": 1065025,
+            "absolute_bound": 1065025,
+            "signed_bits": 22
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    },
+    {
+      "name": "MLP-D256-H128,64",
+      "parameter_count": 41217,
+      "arithmetic": {
+        "scale_bits": 0,
+        "rounding": "exact integer",
+        "signed": true,
+        "coefficient_bound": 1,
+        "input_bound": 1,
+        "layers": [
+          {
+            "preactivation_absolute_bound": 257,
+            "absolute_bound": 66049,
+            "signed_bits": 18
+          },
+          {
+            "preactivation_absolute_bound": 8454273,
+            "absolute_bound": 71474731958529,
+            "signed_bits": 48
+          },
+          {
+            "preactivation_absolute_bound": 4574382845345857,
+            "absolute_bound": 4574382845345857,
+            "signed_bits": 54
+          }
+        ]
+      },
+      "status": "PREPARED_ONLY"
+    }
+  ]
+}
