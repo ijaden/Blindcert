@@ -8,5 +8,11 @@
   "population_size": 1024,
   "sample_size": 128,
   "iterations": 1,
-  "replacement_attempt": "results/system_efficiency_measured_v2"
+  "replacement_attempt": "results/system_efficiency_measured_v2",
+  "timing_boundary_correction": {
+    "aborted_attempt": "results/system_efficiency_measured_v2",
+    "reason": "Place masked-opening MAC checks and persistence in conversion_s rather than mpc_s; preserve disjoint parent intervals.",
+    "replacement_attempt": "results/system_efficiency_final",
+    "workload_changed": false
+  }
 }

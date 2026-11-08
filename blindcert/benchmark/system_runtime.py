@@ -73,14 +73,17 @@ def commands(items: list[tuple[list[str], Path]], logdir: Path, label: str,
             log = (logdir/f'{label}-{i}.log').open('w')
             files.append(log)
             procs.append(subprocess.Popen(cmd, cwd=cwd, env=ENV, stdout=log, stderr=subprocess.STDOUT, start_new_session=True))
-        while any(p.poll() is None for p in procs):
+        while True:
             if any(p.poll() not in (None, 0) for p in procs):
                 raise ExecutionFailure('FAILED', f'{label} process failed; see {logdir}')
             if time.perf_counter()-started > timeout:
                 raise ExecutionFailure('TIMEOUT', f'{label} exceeded {timeout}s')
-            if label == 'mascot' and 'input_shared_observed_s' not in result:
-                if all('INPUT_SHARED' in (logdir/f'{label}-{i}.log').read_text() for i in range(len(procs))):
-                    result['input_shared_observed_s'] = time.perf_counter()-started
+            if label == 'mascot':
+                for marker,key in [('INPUT_SHARED','input_shared_observed_s'),('EVALUATION_COMPLETE','evaluation_observed_s')]:
+                    if key not in result and all(marker in (logdir/f'{label}-{i}.log').read_text() for i in range(len(procs))):
+                        result[key] = time.perf_counter()-started
+            if all(p.poll() is not None for p in procs):
+                break
             peak = max(peak, rss_tree({p.pid for p in procs}))
             if peak > memory_gib*1024**3:
                 raise ExecutionFailure('OOM', f'{label} exceeded {memory_gib} GiB aggregate RSS')
@@ -212,7 +215,7 @@ def mpc_program(spec: dict, config: dict, metadata: dict) -> str:
                   f'bad{g} = '+ '+'.join(f'(prediction[{i}]*attribute[{i}])' for i in range(begin,end))]
         checks += [f'(correct{g} >= {metadata["policy"]["required_correct_per_stratum"]})',
                    f'(bad{g} <= {metadata["policy"]["allowed_violations_per_stratum"]})']
-    lines += ['passed = '+' * '.join(checks), "print_ln('POLICY=%s', passed.reveal())", 'exported = []']
+    lines += ['passed = '+' * '.join(checks), "print_ln('POLICY=%s', passed.reveal())", "print_ln('EVALUATION_COMPLETE')", 'exported = []']
     for name,size in metadata['layout'].items():
         lines.append(f'exported.extend([{name}[i] for i in range({size})])' if name != 'modelNonce' else 'exported.append(modelNonce)')
     lines += ['for value in exported:', '    masked = value+sint.get_random()',
@@ -373,7 +376,7 @@ def session(spec: dict, config: dict, metadata: dict, artifact: Path, path: Path
     def evaluate():
         commands_ = [['stdbuf','-oL',str(MPC/'mascot-party.x'),'-OF','.', '-N','3','-P',str(Q),'-pn','16100','-h','127.0.0.1','-p',str(i),metadata['program_name']] for i in range(3)]
         receipt = call(commands_,[path/f'party{i}' for i in range(3)],'mascot')
-        if 'input_shared_observed_s' not in receipt:
+        if 'input_shared_observed_s' not in receipt or 'evaluation_observed_s' not in receipt:
             raise ExecutionFailure('FAILED','input sharing phase marker was not observed before MPC termination')
         return_receipt = receipt
         log = (path/'logs/mascot-0.log').read_text()
@@ -383,8 +386,10 @@ def session(spec: dict, config: dict, metadata: dict, artifact: Path, path: Path
     receipt = stage('mpc_s',evaluate)
     shared_s = receipt['input_shared_observed_s']
     stages['input_sharing_s'] += shared_s
-    stages['mpc_s'] -= shared_s
+    conversion_tail = stages['mpc_s']-receipt['evaluation_observed_s']
+    stages['mpc_s'] = receipt['evaluation_observed_s']-shared_s
     stage('conversion_s',lambda:call(worker_commands('convert',path),[ROOT]*3,'conversion'))
+    stages['conversion_s'] += conversion_tail
     stage('co_witness_s',lambda:call([
         [str(CO),'generate-witness','-O2','--input',str(path/f'party{i}/input.shared'),'--circuit',str(artifact/'cert.circom'),
          '--protocol','REP3','--curve','BN254','--config',str(path/f'party{i}/network.toml'),'--out',str(path/f'party{i}/witness.shared')]

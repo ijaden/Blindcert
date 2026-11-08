@@ -1,0 +1,40 @@
+{
+  "python_minimum": "3.11",
+  "python_measured": "3.14.4",
+  "node": "24.18.0",
+  "circom": "2.2.3",
+  "snarkjs": "0.7.6",
+  "co_circom": "0.9.0",
+  "mp_spdz": "0.4.3",
+  "files": {
+    "co-circom-x86_64-unknown-linux-gnu.tar.gz": {
+      "sha256": "d8d9613a9f762fca02f59917054b57113d81e24784ce3a3b0e9879ed0572e1e1",
+      "bytes": 8539010
+    },
+    "co-snarks-co-circom-v0.9.0.tar.gz": {
+      "sha256": "d057b9653b9f7344fe2ee06010efd3b955082096c1314891c10f0a00c7d2c770",
+      "bytes": 112357081
+    },
+    "mp-spdz-0.4.3.tar.xz": {
+      "sha256": "4b5f4f7a79f31365288fe4498ba2b70afc314c028696929c8d259ef50ab2e759",
+      "bytes": 141401956
+    },
+    "node-v24.18.0-linux-x64.tar.xz": {
+      "sha256": "55aa7153f9d88f28d765fcdad5ae6945b5c0f98a36881703817e4c450fa76742",
+      "bytes": 31511588
+    },
+    "circom": {
+      "sha256": "85342c7ff332d948df7c0c50ecf201e6129349aef550ce873f3c811b79fe53a3",
+      "bytes": 13145432
+    },
+    "co-circom": {
+      "sha256": "9c258adf96c7094d6f8c77b800c8bc985ec4d1d5acd4718c8ae41876f63ea2cb",
+      "bytes": 25704288
+    },
+    "mp-spdz-0.4.3/mascot-party.x": {
+      "sha256": "c01ca9b9db62889161c8f06fb3378c0ce533271e4cf0dda5057346e0737f3c7e",
+      "bytes": 10105280
+    }
+  },
+  "poseidon_sources": "TaceoLabs/co-snarks tag co-circom-v0.9.0"
+}
