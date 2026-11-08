@@ -13,6 +13,8 @@ from pathlib import Path
 
 import yaml
 
+sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
+
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -58,13 +60,16 @@ def main() -> int:
              "mascot": toolchain / "mp-spdz-0.4.3/mascot-party.x",
              "node": toolchain / "node-v24.18.0-linux-x64/bin/node",
              "snarkjs": toolchain / "node_modules/.bin/snarkjs"}
-    blockers = [
-        "Authenticated LR input/prediction shares are exported, but full certification witness fields are not wired.",
-        "BN254 to REP3 encoding passes an isolated multiplication self-check; certification integration is pending.",
-        "Complete certification circuits and public statement binding are not implemented.",
-        "Independent public verification and closed-interval timing are not implemented.",
-        "Quantization bounds and feasible statistical policy are not yet validated.",
-    ]
+    functional_results = sorted((ROOT / "results").glob("system_functional_check*/summary.json"), key=lambda p:p.stat().st_mtime)
+    functional = json.loads(functional_results[-1].read_text()) if functional_results else None
+    blockers = []
+    if not functional or not all(row['status']=='OK' for row in functional['models']):
+        blockers.append('The complete three-party functional acceptance check has not passed.')
+    from blindcert.benchmark.system_relation import policy
+    try:
+        policy(config)
+    except ValueError as exc:
+        blockers.append(str(exc))
     missing = [name for name, path in tools.items() if not os.access(path, os.X_OK)]
     if missing:
         blockers.append("Missing executables: " + ", ".join(missing))
@@ -82,11 +87,11 @@ def main() -> int:
                      for name in ("circom", "co_circom", "node") if tools[name].exists()},
     }
     manifest = [{**model, "parameter_count": parameter_count(model),
-                 "status": "NOT_IMPLEMENTED", "constraints": None, "private_inputs": None}
+                 "status": "READY" if not blockers else "NOT_IMPLEMENTED", "constraints": None, "private_inputs": None}
                 for model in config["models"]]
     bridge_results = sorted((ROOT / "results/share_bridge").glob("*/result.json"), key=lambda p: p.stat().st_mtime)
     bridge = json.loads(bridge_results[-1].read_text()) if bridge_results else None
-    report = {"share_bridge_self_check": bridge, "status": "NOT_IMPLEMENTED", "measurement_started": False,
+    report = {"functional_acceptance": functional, "share_bridge_self_check": bridge, "status": "READY" if not blockers else "NOT_IMPLEMENTED", "measurement_started": False,
               "blockers": blockers, "models": manifest,
               "iteration_decision": "One session, following the explicit instruction in section 1."}
     for name, value in (("environment.json", environment), ("model_manifest.json", manifest),
@@ -94,7 +99,7 @@ def main() -> int:
         (output / name).write_text(json.dumps(value, indent=2) + "\n")
     (output / "effective_config.yaml").write_text(yaml.safe_dump(config, sort_keys=False))
     print(json.dumps({"status": report["status"], "output": str(output), "blockers": blockers}))
-    return 2
+    return 2 if blockers else 0
 
 
 if __name__ == "__main__":

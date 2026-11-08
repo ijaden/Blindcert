@@ -1,0 +1,16 @@
+{
+  "functional_check_only": true,
+  "verified": true,
+  "model": "functional-LR-D2",
+  "population_size": 16,
+  "sample_size": 4,
+  "constraints": 5164,
+  "private_inputs": 36,
+  "mpc_parties": 3,
+  "proof_parties": 3,
+  "optimization": "O2",
+  "clear_witness_in_system_path": false,
+  "integer_reference_public_vector_matches": true,
+  "local_results": "results/system_functional_check5",
+  "tests_passed": 20
+}

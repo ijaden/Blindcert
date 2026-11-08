@@ -72,12 +72,13 @@ def main() -> None:
     parser.add_argument('--previous', type=Path, required=True)
     parser.add_argument('--layout', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--public', type=Path)
     args = parser.parse_args()
     layout = json.loads(args.layout.read_text())
     count = sum(layout.values())
     own = read_authenticated_share_values(args.own, count)
     previous = read_authenticated_share_values(args.previous, count)
-    args.out.write_bytes(encode_rep3_input(own, previous, layout, {}))
+    args.out.write_bytes(encode_rep3_input(own, previous, layout, json.loads(args.public.read_text()) if args.public else {}))
     args.out.chmod(0o600)
 
 

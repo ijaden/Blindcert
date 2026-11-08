@@ -1,41 +1,23 @@
-# Ubuntu system efficiency implementation status
+# Ubuntu system efficiency status
 
-The complete experiment remains unfinished. No formal end-to-end measurement or paper tables have been produced. The default benchmark entry checks readiness and returns exit code 2 while the complete relation is unavailable. Legacy component measurements cannot populate the requested system tables.
+The continuous certification implementation passes its normal-path functional acceptance check. Formal model measurements are pending. The functional check is explicitly excluded from paper table export.
 
-The checkout retains upstream commit `0e480001c8712e4d96bd5216ee76b038acf895a4`. The original local directory is preserved separately. Work uses branch `experiment/system-e2e-three-party`.
+The implemented path performs owner and full-population holder registration, three-party Commit-Reveal, private MASCOT evaluation, MAC-checked share export, per-party BN254-to-REP3 conversion, collaborative witness preparation, collaborative Groth16 proving, public packaging and independent verification. The verifier checks the separately retained registration, challenge, sampled indices and full expected public vector. Single-prover controls run in a separate directory after the session and first-use timers have stopped.
 
-## Completed work
+The generated circuit covers model commitments, full-root membership paths, bounded integer inference, predictions, both stratified accuracy and violation counters, and a session binding. All ten model architectures use the same circuit generator, MPC expression generator and runtime. See system_relation.md for exact encoding, security assumptions and timing boundaries.
 
-The LR MASCOT backend now launches three actual party processes with separate input and persistence directories. P0 supplies the model and P1/P2 supply their respective holder records. It operates over the BN254 scalar field and exports three authenticated share files containing model inputs, sampled records and predictions. Masked openings and explicit MAC checks precede export; conversion is attempted only after every process exits successfully. These exported fields are not yet a complete certification witness.
+Formal configuration is N=1024, m=128, two equal strata, two holders, three MASCOT parties, three REP3 provers, one session, fixed workload seed 20261105, zero-scale exact integer arithmetic, and identical model-independent resource budgets. Each stratum requires at least 60 correct predictions and at most 4 violations. The resource budget is 180 seconds per subprocess stage, 10 GiB aggregate subprocess-tree RSS and SRS power at most 21. These caps are explicit experiment limits; failures are retained rather than estimated.
 
-The bridge decodes MP-SPDZ 0.4.3 persistence headers and Montgomery field elements, then serializes co-circom 0.9.0 REP3 inputs. Each conversion process reads its own additive share and its predecessor's share, without reconstructing the secret. A three-private-input multiplication self-check successfully generated and verified a real Groth16 proof from these shares. No clear witness, split-input or split-witness command was used in that self-check. It is a functional check, not a system performance experiment.
+The normal-path acceptance result is results/system_functional_check5/summary.json. It used N=16 and m=4, matching O2 optimization in both circuit compilers, and accepted the actual proof generated from MASCOT-derived shares. The separate integer-reference single-prover control produced the identical public vector. Earlier failed TLS and successful O1 checks remain archived in separate directories. Twenty tests pass.
 
-The security boundary is explicitly limited: MASCOT authentication is checked before the local file conversion; REP3 supports an honest majority with at most one passive corruption. Trusted local files and orchestration are assumed during handoff. The converter does not independently validate persisted MACs after arbitrary file modification, and does not provide active security for REP3. The self-check uses public example TLS keys and an insecure test SRS; these are not a deployment setup.
-
-Ten deterministic private workloads have been generated under artifacts/system_workload. The Python reference uses exact integer arithmetic, quadratic hidden activations, a zero decision threshold and lexicographic SVM quadratic coefficients. Model exports contain 8,321 and 41,217 parameters for the largest two MLPs, respectively. Per-layer worst-case integer bounds are derived and recorded. Cross-backend equivalence remains unvalidated.
-
-Legacy full-protocol execution now refuses to report success as a continuous session. Plaintext-witness proof fallbacks have been removed from both legacy full-protocol and efficiency scripts. A raw authenticated share descriptor is rejected by the existing plaintext passport path instead of being treated as a complete Witness.
-
-## Configuration and reproducibility
-
-The fixed configuration uses N=1024, m=128, three MASCOT parties, three REP3 provers, two holders, two strata, one session and seed 20261105. One session follows the explicit instruction in section 1 of the supplied plan. Resource limits are proposed budgets; fit has not been established. The VMware guest exposes eight vCPUs and approximately 16 GiB RAM. Physical-host allocation is not observable from the guest.
+Commands:
 
 ```bash
 python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --preflight
-python3 scripts/check_share_bridge.py
-python3 -m pytest -q
+python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --iterations 1 --output results/system_efficiency_measured
+python3 scripts/export_latex_table.py --input results/system_efficiency_measured/summary.json --output results/system_efficiency_measured/tables
 ```
 
-The bridge and real MPC tests require permission for local sockets. The bridge writes a fresh UUID directory under results/share_bridge, with per-party logs, private share files and a public result.json. The readiness check writes environment.json, effective_config.yaml, model_manifest.json and preflight.json under results/system_efficiency. It returns 2 while implementation blockers remain. Public evidence and tool binary hashes are saved in docs/system_efficiency_audit.json. No private inputs, witnesses, shares or keys are staged for Git.
+The larger-model and full-protocol scripts delegate to the same runtime. A real-backend failure does not switch to a mock or a clear-witness split. The legacy component benchmark requires an explicit flag and is excluded from system results.
 
-## Remaining required implementation
-
-1. Complete certification circuits with full-population membership paths, registered model commitments, sampled-index binding, matching arithmetic and a feasible statistical policy.
-2. Export all circuit input fields from the same MASCOT session, integrate conversion and cooperative witness preparation, and check the result against the independent integer reference.
-3. Connect public verification to the expected registered statement and transcript in an independent process.
-4. Implement closed-interval Setup, session and first-use timing, per-process resource limits and isolated single-prover controls.
-5. Run all ten models sequentially, retain actual failed rows, export the two tables from measured records, and publish final reproducibility results.
-
-## Validation
-
-Sixteen tests pass, including the updated three-party MASCOT test and integer model semantic checks. The isolated share-bridge self-check also passes. These results do not establish a complete BlindCert certification session.
+Private model/data inputs, witnesses, shares, credentials, TLS private keys and large generated artifacts remain ignored by Git. Only source, configuration and public audit summaries are uploaded. Work uses branch experiment/system-e2e-three-party and retains the upstream history.

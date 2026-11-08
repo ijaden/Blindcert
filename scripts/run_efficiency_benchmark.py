@@ -520,15 +520,15 @@ def main() -> int:
     parser.add_argument("--attempt-mpc-witness-proof", action="store_true")
     args = parser.parse_args()
     if args.config or args.preflight:
-        command = [os.sys.executable, str(ROOT / "scripts/preflight_system_efficiency.py")]
+        script = "preflight_system_efficiency.py" if args.preflight else "run_system_efficiency.py"
+        command = [os.sys.executable, str(ROOT / "scripts" / script)]
         if args.config:
             command.extend(["--config", str(args.config)])
         if args.output:
             command.extend(["--output", str(args.output)])
-        result = subprocess.run(command, check=False)
         if not args.preflight:
-            print("System measurement is unavailable until the complete certification relation is implemented.", file=os.sys.stderr)
-        return result.returncode or 2
+            command.extend(["--iterations", str(args.iterations)])
+        return subprocess.run(command, check=False).returncode
     if not args.legacy_component_benchmark:
         parser.error("use --config configs/system_efficiency.yaml --preflight; the legacy path requires --legacy-component-benchmark")
     if args.iterations < 1:

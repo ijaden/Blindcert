@@ -13,7 +13,7 @@ iterations: 1
 workload_seed: 20261105
 output_dir: results/system_efficiency
 threads: 1
-timeout_s: 3600
+timeout_s: 180
 memory_limit_gib: 10
 models:
   - {name: LR-D8, kind: linear, layers: [8, 1]}
@@ -26,3 +26,8 @@ models:
   - {name: LR-D1024, kind: linear, layers: [1024, 1]}
   - {name: MLP-D128-H64, kind: quadratic_mlp, layers: [128, 64, 1]}
   - {name: 'MLP-D256-H128,64', kind: quadratic_mlp, layers: [256, 128, 64, 1]}
+srs_source: snarkjs-published
+minimum_accuracy: 0.75
+maximum_violation_rate: 0.25
+statistical_failure_probability: 0.05
+srs_max_power: 21

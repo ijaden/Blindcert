@@ -1,3 +1,5 @@
-from blindcert.cli import main
+from export_system_tables import main
 
-raise SystemExit(main(["export-results"]))
+
+if __name__ == "__main__":
+    main()
