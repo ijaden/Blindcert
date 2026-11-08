@@ -1,0 +1,12 @@
+{
+  "aborted_attempt": "results/system_efficiency_measured",
+  "reason": "Pinned snarkjs 0.7.6 README storage.googleapis.com SRS URLs returned HTTP 403 before proving.",
+  "replacement_source": "https://circom.info/powersOfTau28_hez_final_<power>.ptau",
+  "source_reference": "https://github.com/iden3/snarkjs#7-prepare-phase-2",
+  "checksum_policy": "Continue verifying the original release README BLAKE2b digest.",
+  "workload_changed": false,
+  "population_size": 1024,
+  "sample_size": 128,
+  "iterations": 1,
+  "replacement_attempt": "results/system_efficiency_measured_v2"
+}

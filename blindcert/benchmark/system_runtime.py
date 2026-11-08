@@ -262,7 +262,8 @@ def setup(spec: dict, config: dict, directory: Path, call) -> dict:
         match = re.search(r'\[powersOfTau28_hez_final_'+str(power)+r'\.ptau\]\((https://[^)]+)\)\s*\|\s*([0-9a-f]{128})',readme)
         if not match:
             raise ExecutionFailure('NOT_IMPLEMENTED',f'no pinned SRS source for power {power}')
-        url,expected_hash = match.groups()
+        original_url,expected_hash = match.groups()
+        url = 'https://circom.info/powersOfTau28_hez_final_'+str(power)+'.ptau'
         cache = TOOLS/'system_srs'
         cache.mkdir(exist_ok=True)
         target = cache/f'power{power}.ptau'
@@ -279,7 +280,7 @@ def setup(spec: dict, config: dict, directory: Path, call) -> dict:
             raise ExecutionFailure('FAILED','SRS checksum differs from pinned snarkjs release README')
         if not srs_reused:
             download.rename(target)
-        save(directory/'srs.json',{'url':url,'blake2b':expected_hash,'checksum_s':time.perf_counter()-before,'reused_cache':srs_reused})
+        save(directory/'srs.json',{'url':url,'original_release_url':original_url,'blake2b':expected_hash,'checksum_s':time.perf_counter()-before,'reused_cache':srs_reused})
         (directory/'final.ptau').symlink_to(target)
         srs_source = url+'; checksum authenticated by pinned snarkjs release README; no local SRS generation'
     else:
