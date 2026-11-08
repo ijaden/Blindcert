@@ -1,0 +1,11 @@
+model,status,constraints,private_inputs,planned_runs,successful_runs,challenge_s,co_prove_s,co_witness_s,conversion_s,e2e_s,finalize_s,first_use_total_s,input_sharing_s,mpc_s,packaging_s,proof_size_kb,registration_s,setup_s,single_prove_s,startup_input_s,uncovered_s,verify_s,reason
+LR-D8,OK,330994,2570,1,1,0.2413320380001096,15.14104038000005,106.64740430499978,0.1135152039996683,148.18346069399968,4.8801000048115384e-05,360.0166962160001,0.7666806959996393,24.30078308200018,0.00016612099989288254,0.7060546875,0.7554221430000325,211.83243119600002,10.76139021500012,0.0011252190001869167,2.8810999992856523e-05,0.21591389400009575,
+LR-D16,TIMEOUT,410062,3602,1,0,,,,,,,,,,,,,,,,,,groth16-setup exceeded 180s
+LR-D64,TIMEOUT,665690,9794,1,0,,,,,,,,,,,,,,,,,,groth16-setup exceeded 180s
+MLP-D16-H8,TIMEOUT,432494,3730,1,0,,,,,,,,,,,,,,,,,,groth16-setup exceeded 180s
+"MLP-D16-H8,4",TIMEOUT,439542,3762,1,0,,,,,,,,,,,,,,,,,,groth16-setup exceeded 180s
+"polynomial SVM-D16,2",TIMEOUT,451018,3738,1,0,,,,,,,,,,,,,,,,,,groth16-setup exceeded 180s
+LR-D256,OOM,,,1,0,,,,,,,,,,,,,,,,,,compile-circuit exceeded 10 GiB aggregate RSS
+LR-D1024,OOM,,,1,0,,,,,,,,,,,,,,,,,,compile-circuit exceeded 10 GiB aggregate RSS
+MLP-D128-H64,OOM,,,1,0,,,,,,,,,,,,,,,,,,compile-mascot exceeded 10 GiB aggregate RSS
+"MLP-D256-H128,64",OOM,,,1,0,,,,,,,,,,,,,,,,,,compile-mascot exceeded 10 GiB aggregate RSS

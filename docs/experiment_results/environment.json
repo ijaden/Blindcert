@@ -1,0 +1,64 @@
+{
+  "source_commit": "442f55e76c2a4ff4c2d0afd4b60af06d50c8a7a2",
+  "source_files_sha256": {
+    "blindcert/benchmark/system_runtime.py": "ab7734b7b8562640d9d3b61721f02ef61742a52142e8cb633656a5fe2c3140f0",
+    "blindcert/benchmark/system_relation.py": "b34a4fdce23a258ad5854223a14b5fdba7d690bbe0e231c4dfce40f841064a5b",
+    "blindcert/benchmark/system_models.py": "4c665e6ba5ffb07b8eae56d42f6bc4c3e6379e31b30315eed0deb0b1bfbfaab1"
+  },
+  "platform": "Linux-7.0.0-28-generic-x86_64-with-glibc2.43",
+  "python": "3.14.4 (main, Jun 18 2026, 14:25:02) [GCC 15.2.0]",
+  "cpu": "Architecture:                            x86_64\nCPU op-mode(s):                          32-bit, 64-bit\nAddress sizes:                           45 bits physical, 48 bits virtual\nByte Order:                              Little Endian\nCPU(s):                                  8\nOn-line CPU(s) list:                     0-7\nVendor ID:                               AuthenticAMD\nModel name:                              AMD Ryzen 7 9700X 8-Core Processor\nCPU family:                              26\nModel:                                   68\nThread(s) per core:                      1\nCore(s) per socket:                      8\nSocket(s):                               1\nStepping:                                0\nBogoMIPS:                                7599.99\nFlags:                                   fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology tsc_reliable nonstop_tsc cpuid extd_apicid tsc_known_freq pni pclmulqdq ssse3 fma cx16 sse4_1 sse4_2 x2apic movbe popcnt aes xsave avx f16c rdrand hypervisor lahf_lm cmp_legacy extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw topoext ssbd ibrs ibpb ibrs_enhanced vmmcall fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid avx512f avx512dq adx smap avx512ifma clflushopt clwb avx512cd sha_ni avx512bw avx512vl xsaveopt xsavec xgetbv1 xsaves user_shstk avx_vnni avx512_bf16 clzero wbnoinvd arat avx512vbmi umip pku ospke avx512_vbmi2 gfni vaes vpclmulqdq avx512_vnni avx512_bitalg avx512_vpopcntdq rdpid movdiri movdir64b overflow_recov succor fsrm avx512_vp2intersect flush_l1d\nHypervisor vendor:                       VMware\nVirtualization type:                     full\nL1d cache:                               384 KiB (8 instances)\nL1i cache:                               256 KiB (8 instances)\nL2 cache:                                8 MiB (8 instances)\nL3 cache:                                32 MiB (1 instance)\nNUMA node(s):                            1\nNUMA node0 CPU(s):                       0-7\nVulnerability Gather data sampling:      Not affected\nVulnerability Ghostwrite:                Not affected\nVulnerability Indirect target selection: Not affected\nVulnerability Itlb multihit:             Not affected\nVulnerability L1tf:                      Not affected\nVulnerability Mds:                       Not affected\nVulnerability Meltdown:                  Not affected\nVulnerability Mmio stale data:           Not affected\nVulnerability Old microcode:             Not affected\nVulnerability Reg file data sampling:    Not affected\nVulnerability Retbleed:                  Not affected\nVulnerability Spec rstack overflow:      Vulnerable: Safe RET, no microcode\nVulnerability Spec store bypass:         Mitigation; Speculative Store Bypass disabled via prctl\nVulnerability Spectre v1:                Mitigation; usercopy/swapgs barriers and __user pointer sanitization\nVulnerability Spectre v2:                Mitigation; Enhanced / Automatic IBRS; IBPB conditional; STIBP disabled; PBRSB-eIBRS Not affected; BHI Not affected\nVulnerability Srbds:                     Not affected\nVulnerability Tsa:                       Not affected\nVulnerability Tsx async abort:           Not affected\nVulnerability Vmscape:                   Not affected\n",
+  "memory": "               total        used        free      shared  buff/cache   available\nMem:     16178102272  2578305024  6506262528    36691968  7352098816 13599797248\nSwap:     4294963200           0  4294963200\n",
+  "thread_configuration": {
+    "RAYON_NUM_THREADS": 1,
+    "OMP_NUM_THREADS": 1,
+    "OPENBLAS_NUM_THREADS": 1,
+    "snarkjs": "Node worker pool on the fixed eight-vCPU guest"
+  },
+  "toolchain_lock": {
+    "python_minimum": "3.11",
+    "python_measured": "3.14.4",
+    "node": "24.18.0",
+    "circom": "2.2.3",
+    "snarkjs": "0.7.6",
+    "co_circom": "0.9.0",
+    "mp_spdz": "0.4.3",
+    "files": {
+      "co-circom-x86_64-unknown-linux-gnu.tar.gz": {
+        "sha256": "d8d9613a9f762fca02f59917054b57113d81e24784ce3a3b0e9879ed0572e1e1",
+        "bytes": 8539010
+      },
+      "co-snarks-co-circom-v0.9.0.tar.gz": {
+        "sha256": "d057b9653b9f7344fe2ee06010efd3b955082096c1314891c10f0a00c7d2c770",
+        "bytes": 112357081
+      },
+      "mp-spdz-0.4.3.tar.xz": {
+        "sha256": "4b5f4f7a79f31365288fe4498ba2b70afc314c028696929c8d259ef50ab2e759",
+        "bytes": 141401956
+      },
+      "node-v24.18.0-linux-x64.tar.xz": {
+        "sha256": "55aa7153f9d88f28d765fcdad5ae6945b5c0f98a36881703817e4c450fa76742",
+        "bytes": 31511588
+      },
+      "circom": {
+        "sha256": "85342c7ff332d948df7c0c50ecf201e6129349aef550ce873f3c811b79fe53a3",
+        "bytes": 13145432
+      },
+      "co-circom": {
+        "sha256": "9c258adf96c7094d6f8c77b800c8bc985ec4d1d5acd4718c8ae41876f63ea2cb",
+        "bytes": 25704288
+      },
+      "mp-spdz-0.4.3/mascot-party.x": {
+        "sha256": "c01ca9b9db62889161c8f06fb3378c0ce533271e4cf0dda5057346e0737f3c7e",
+        "bytes": 10105280
+      }
+    },
+    "poseidon_sources": "TaceoLabs/co-snarks tag co-circom-v0.9.0"
+  },
+  "resource_limits": {
+    "timeout_s": 180,
+    "memory_limit_gib": 10,
+    "srs_max_power": 21
+  },
+  "cgroup_limits": {}
+}

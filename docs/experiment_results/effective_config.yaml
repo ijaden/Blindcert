@@ -1,0 +1,80 @@
+mpc_backend: mpspdz
+mpc_protocol: mascot
+mpc_parties: 3
+proof_backend: collaborative
+proof_system: groth16
+proof_protocol: REP3
+proof_parties: 3
+holders: 2
+strata: 2
+population_size: 1024
+sample_size: 128
+iterations: 1
+workload_seed: 20261105
+output_dir: results/system_efficiency
+threads: 1
+timeout_s: 180
+memory_limit_gib: 10
+models:
+- name: LR-D8
+  kind: linear
+  layers:
+  - 8
+  - 1
+- name: LR-D16
+  kind: linear
+  layers:
+  - 16
+  - 1
+- name: LR-D64
+  kind: linear
+  layers:
+  - 64
+  - 1
+- name: MLP-D16-H8
+  kind: quadratic_mlp
+  layers:
+  - 16
+  - 8
+  - 1
+- name: MLP-D16-H8,4
+  kind: quadratic_mlp
+  layers:
+  - 16
+  - 8
+  - 4
+  - 1
+- name: polynomial SVM-D16,2
+  kind: polynomial_svm
+  layers:
+  - 16
+  - 1
+- name: LR-D256
+  kind: linear
+  layers:
+  - 256
+  - 1
+- name: LR-D1024
+  kind: linear
+  layers:
+  - 1024
+  - 1
+- name: MLP-D128-H64
+  kind: quadratic_mlp
+  layers:
+  - 128
+  - 64
+  - 1
+- name: MLP-D256-H128,64
+  kind: quadratic_mlp
+  layers:
+  - 256
+  - 128
+  - 64
+  - 1
+srs_source: snarkjs-published
+minimum_accuracy: 0.75
+maximum_violation_rate: 0.25
+statistical_failure_probability: 0.05
+srs_max_power: 21
+execution_output_dir: /home/jaden/workspace/Blindcert-system-e2e/results/system_efficiency_final

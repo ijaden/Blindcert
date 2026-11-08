@@ -1,0 +1,27 @@
+\begin{table}[t]
+\centering
+\caption{System-level end-to-end efficiency of BlindCert.}
+\label{tab:baseline-performance}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\linewidth}{!}{
+\begin{tabular}{lrrr}
+\hline
+Model & Setup (s) & End-to-end (s) & First-use total (s) \\
+\hline
+LR-D8 & 211.832 & 148.183 & 360.017 \\
+LR-D16 & \texttt{TIMEOUT} & \texttt{TIMEOUT} & \texttt{TIMEOUT} \\
+LR-D64 & \texttt{TIMEOUT} & \texttt{TIMEOUT} & \texttt{TIMEOUT} \\
+MLP-D16-H8 & \texttt{TIMEOUT} & \texttt{TIMEOUT} & \texttt{TIMEOUT} \\
+MLP-D16-H8,4 & \texttt{TIMEOUT} & \texttt{TIMEOUT} & \texttt{TIMEOUT} \\
+polynomial SVM-D16,2 & \texttt{TIMEOUT} & \texttt{TIMEOUT} & \texttt{TIMEOUT} \\
+LR-D256 & \texttt{OOM} & \texttt{OOM} & \texttt{OOM} \\
+LR-D1024 & \texttt{OOM} & \texttt{OOM} & \texttt{OOM} \\
+MLP-D128-H64 & \texttt{OOM} & \texttt{OOM} & \texttt{OOM} \\
+MLP-D256-H128,64 & \texttt{OOM} & \texttt{OOM} & \texttt{OOM} \\
+\hline
+\end{tabular}
+}
+\par\smallskip
+\parbox{\linewidth}{\scriptsize Three MASCOT parties and three REP3 provers; $N=1024$, $m=128$. A fixed 180 s stage timeout and 10 GiB aggregate RSS budget apply. Setup includes acquisition or checksum verification of an existing SRS and circuit-specific settings. One session planned per model; sample standard deviation is unavailable for $n=1$. Setup and first-use totals are directly measured once, with OS caches retained. Status cells identify failed model attempts, including phases that were not reached; no time is estimated. Single proving is outside the certification interval.}
+\end{table}

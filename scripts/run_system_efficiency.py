@@ -33,6 +33,14 @@ def main() -> int:
     parser.add_argument('--reuse-setup',type=Path)
     args = parser.parse_args()
     config = yaml.safe_load(args.config.read_text())
+    fixed = {'mpc_backend':'mpspdz','mpc_protocol':'mascot','mpc_parties':3,'proof_backend':'collaborative','proof_system':'groth16','proof_protocol':'REP3','proof_parties':3,'holders':2,'strata':2,'threads':1}
+    for key,value in fixed.items():
+        if config.get(key) != value:
+            parser.error(f'{key} must be {value!r} for this fixed deployment')
+    if config['timeout_s'] <= 0 or config['memory_limit_gib'] <= 0:
+        parser.error('positive timeout and memory budgets are required')
+    if not 0 < config['sample_size'] <= config['population_size'] or config['sample_size'] % 2:
+        parser.error('sample size must be positive, even and no larger than the population')
     if args.iterations is not None:
         config['iterations'] = args.iterations
     if config['iterations'] != 1:
@@ -44,6 +52,8 @@ def main() -> int:
     if args.reuse_setup and not args.functional_check:
         parser.error('setup reuse is only allowed for functional checks')
     output = (args.output or ROOT/config['output_dir']).resolve()
+    if not args.functional_check and ((output/'artifacts').exists() or (output/'sessions').exists()):
+        parser.error('formal measurements require empty artifact and session directories')
     output.mkdir(parents=True,exist_ok=True)
     if (output/'summary.json').exists():
         parser.error('output already contains a summary; choose a new empty output directory')

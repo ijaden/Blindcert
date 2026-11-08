@@ -1,23 +1,15 @@
 # Ubuntu system efficiency status
 
-The continuous certification implementation passes its normal-path functional acceptance check. Formal model measurements are pending. The functional check is explicitly excluded from paper table export.
+The implementation, one complete ten-model attempt, result export and public verification have been completed. Under the fixed 180-second stage timeout and 10-GiB aggregate RSS budget, LR-D8 completed certification; five models timed out in Groth16 setup and four larger models exceeded the compilation memory budget. Failed rows are retained, and no missing performance value is estimated.
 
-The implemented path performs owner and full-population holder registration, three-party Commit-Reveal, private MASCOT evaluation, MAC-checked share export, per-party BN254-to-REP3 conversion, collaborative witness preparation, collaborative Groth16 proving, public packaging and independent verification. The verifier checks the separately retained registration, challenge, sampled indices and full expected public vector. Single-prover controls run in a separate directory after the session and first-use timers have stopped.
+The measured implementation is commit 442f55e. Later packaging and input-validation changes do not alter the measured certification computations. All raw runs retain the measured source commit and source file digests. The independent small-relation acceptance check passed before formal measurement; twenty regression tests pass.
 
-The generated circuit covers model commitments, full-root membership paths, bounded integer inference, predictions, both stratified accuracy and violation counters, and a session binding. All ten model architectures use the same circuit generator, MPC expression generator and runtime. See system_relation.md for exact encoding, security assumptions and timing boundaries.
+Formal configuration: N=1024, m=128, two holders, two equal strata, three MASCOT processes, three Groth16/REP3 provers, exact integer arithmetic, quadratic MLP activations, one session per model and workload seed 20261105. Each stratum requires at least 60 correct predictions and at most 4 violations. SRS files are checksum-verified public ceremony artifacts; setup does not claim SRS generation. The end-to-end security assumptions include at most one passive corruption and trusted local file handoff.
 
-Formal configuration is N=1024, m=128, two equal strata, two holders, three MASCOT parties, three REP3 provers, one session, fixed workload seed 20261105, zero-scale exact integer arithmetic, and identical model-independent resource budgets. Each stratum requires at least 60 correct predictions and at most 4 violations. The resource budget is 180 seconds per subprocess stage, 10 GiB aggregate subprocess-tree RSS and SRS power at most 21. These caps are explicit experiment limits; failures are retained rather than estimated.
+Local measurements and full logs: results/system_efficiency_final. Public records and tables: docs/experiment_results. The public LR-D8 passport, expected registration/transcript and verification key can be independently verified without private inputs. The single-prover control has also been verified after all measurements.
 
-The normal-path acceptance result is results/system_functional_check5/summary.json. It used N=16 and m=4, matching O2 optimization in both circuit compilers, and accepted the actual proof generated from MASCOT-derived shares. The separate integer-reference single-prover control produced the identical public vector. Earlier failed TLS and successful O1 checks remain archived in separate directories. Twenty tests pass.
+LR-D8 has 330,994 constraints and 2,570 private inputs. Its measured Setup is 211.832 seconds, end-to-end time 148.183 seconds and first-use total 360.017 seconds. These are one-run observations, not averages over repeated sessions; sample standard deviation is unavailable. No comparative scaling claim is made from failed model attempts.
 
-Commands:
+TIMEOUT in Groth16 setup: LR-D16, LR-D64, MLP-D16-H8, MLP-D16-H8,4 and polynomial SVM-D16,2. OOM during Circom compilation: LR-D256 and LR-D1024. OOM during MP-SPDZ compilation: MLP-D128-H64 and MLP-D256-H128,64. OOM denotes the enforced observed aggregate RSS budget, not an assertion that the guest OS exhausted all physical memory.
 
-```bash
-python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --preflight
-python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --iterations 1 --output results/system_efficiency_measured
-python3 scripts/export_latex_table.py --input results/system_efficiency_measured/summary.json --output results/system_efficiency_measured/tables
-```
-
-The larger-model and full-protocol scripts delegate to the same runtime. A real-backend failure does not switch to a mock or a clear-witness split. The legacy component benchmark requires an explicit flag and is excluded from system results.
-
-Private model/data inputs, witnesses, shares, credentials, TLS private keys and large generated artifacts remain ignored by Git. Only source, configuration and public audit summaries are uploaded. Work uses branch experiment/system-e2e-three-party and retains the upstream history.
+See system_relation.md for protocol and timer boundaries, ubuntu_reproduction.md for tool installation and rerun commands, toolchain_lock.json for actual tool hashes, and experiment_restarts.json for the separately archived aborted attempts. All formal tables use only the final batch. Private model/data files, complete witnesses, shares, TLS private keys and large generated artifacts remain local and ignored by Git.

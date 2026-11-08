@@ -1,5 +1,7 @@
 # BlindCert 
 
+For the continuous three-party Ubuntu certification experiment, see [the reproduction instructions](docs/ubuntu_reproduction.md) and [the certification relation](docs/system_relation.md). The configuration-driven system entry is `scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml`; legacy mock and component outputs are not system measurements.
+
 This repository is an experimental, reproducible prototype for BlindCert: public
 verification of certification over private models and benchmark partitions.
 

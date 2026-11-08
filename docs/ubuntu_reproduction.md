@@ -18,8 +18,8 @@ Generate all ten private workloads once, before registration or sampling:
 ```bash
 python3 scripts/prepare_system_workload.py --config configs/system_efficiency.yaml
 python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --preflight
-python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --iterations 1 --output results/system_efficiency_measured_v2
-python3 scripts/export_latex_table.py --input results/system_efficiency_measured_v2/summary.json --output results/system_efficiency_measured_v2/tables
+python3 scripts/run_efficiency_benchmark.py --config configs/system_efficiency.yaml --iterations 1 --output results/system_efficiency_final
+python3 scripts/export_latex_table.py --input results/system_efficiency_final/summary.json --output results/system_efficiency_final/tables
 ```
 
 Use new empty output directories when repeating a complete measurement. The preparation script refuses to overwrite an existing private workload directory. All formal models share N=1024, m=128, exact integer encoding and the fixed policy and resource limits in configs/system_efficiency.yaml. One measured session follows the explicit instruction in section 1 of the supplied plan; no five-run average is claimed. Compilation, SRS acquisition/checksum verification and Groth16 setup are measured from an empty per-model artifact directory. SRS cache reuse is recorded explicitly.
@@ -29,3 +29,5 @@ The original snarkjs release SRS URLs returned HTTP 403 in this environment. Cur
 For functional acceptance on a small relation, use `python3 scripts/run_system_efficiency.py --functional-check --output results/system_functional_check_new`. It includes a full registration/challenge/MPC/conversion/witness/proof/verification path and an independent integer control. Its N/m and deliberately permissive functional-check policy differ from the formal experiment. Table export refuses functional-check summaries.
 
 Private inputs, shares, witnesses, TLS private keys, downloaded dependencies and large proving artifacts remain local under ignored paths. Public summaries, source/configuration digests, toolchain locks, table files and reproduction documents can be committed. The verifier uses the public expected registration and transcript retained before proving; it does not read model parameters, records or witness shares.
+
+The two exported table files require the standard graphicx package for resizebox. Public measurements and an independently verifiable successful passport are included in docs/experiment_results. Final measurement source is commit 442f55e; packaging changes are recorded in later commits. Timeout and OOM rows describe the fixed experiment budget, not successful certification timings.
